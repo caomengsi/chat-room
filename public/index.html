@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+ <html>
+     <head>
+        <meta charset="utf-8">
+        <title>聊天室</title>
+        <style>
+        #num{
+          color: red;
+        }
+        </style>
+     </head>
+     <body>
+    <h1>聊天室</h1>
+    <div>
+       <h2>当前连接人数: <span id="num">0</span></h2>
+    <div>
+    <div>
+      <ul id="message">
+      </ul>
+    </div>
+    <form action="">
+      <input id="msg" type="text" size="40" placeholder="请输入">
+       <button>Send</button>
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+$(function () {
+    var socket = io.connect('http://localhost:3000');
+
+    function handle(data){
+      console.log('lll',data)
+      $('#message').append(data.msg)
+      if(data.countId){
+        $('#num').html(data.countId);
+      }
+    }
+    socket.on('conn',handle)
+    socket.on('leave',handle)
+    socket.on('r-msg',handle)
+    $('form').submit(function(){
+          socket.emit('s-msg', $('#msg').val());
+          $('#msg').val('');
+          return false;
+        });
+
+
+
+  });
+
+
+
+</script>
+
+     </body>
+ </html>
