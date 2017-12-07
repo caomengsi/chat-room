@@ -7,21 +7,33 @@
         #num{
           color: red;
         }
+        #myid{
+          color: blue;
+        }
         </style>
      </head>
      <body>
     <h1>聊天室</h1>
     <div>
        <h2>当前连接人数: <span id="num">0</span></h2>
+       <h2>我的id: <span id="myid">0</span></h2>
     <div>
     <div>
       <ul id="message">
       </ul>
     </div>
     <form action="">
+      <h3>群聊</h3>
       <input id="msg" type="text" size="40" placeholder="请输入">
        <button>Send</button>
     </form>
+    <h3>你可以私信任何一个人哦</h3>
+    <span> id: </span>
+    <input id="otherId" type="text" size="40" placeholder="请输入">
+    <br/>
+    <span> 悄悄说地话: </span>
+    <input id="msgOne" type="text" size="40" placeholder="请输入">
+    <button id="sendOne">Send</button>
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
@@ -32,21 +44,30 @@ $(function () {
     function handle(data){
       console.log('lll',data)
       $('#message').append(data.msg)
-      if(data.countId){
-        $('#num').html(data.countId);
-      }
+      data.countId && $('#num').html(data.countId);
+      data.socketid && $('#myid').html(data.socketid);
     }
+
     socket.on('conn',handle)
     socket.on('leave',handle)
     socket.on('r-msg',handle)
+    socket.on('message',handle)
     $('form').submit(function(){
           socket.emit('s-msg', $('#msg').val());
           $('#msg').val('');
           return false;
         });
 
+    $('#sendOne').unbind('click').click(function(){
 
+      var socketId = $('#otherId').val().trim();
+      var msg= $('#msgOne').val();
+      console.log('click', socketId)
+      socket.emit('sixin', socketId+','+ msg)
+       $('#msgOne').val('');
 
+      // socket.send(socketId+",i am ok");
+    })
   });
 
 
